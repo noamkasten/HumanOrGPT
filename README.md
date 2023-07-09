@@ -78,7 +78,8 @@ for the models are presented in "Configurations" folder.
 ![Image of benchmarks](./Images/ResultsPart1.png)
 
 ### Conclusion on the first part - building the classification models:
-1. It seems that the “generated” dataset of older versions of GPT are too much generic and easy to distinguish (99%~). GPT 4 generated dataset is harder to distinguished but still relatively easy (91%~).
+1. It seems that the “generated” dataset of older versions of GPT are too much generic and easy to distinguish (99%\~).
+GPT 4 generated dataset is harder to distinguished but still relatively easy (91%\~).
 2. “Rephrased” datasets are harder (75%~) to differentiate as they keep the notions and definitions as in the respective human comment.
 3. The custom head done better in 2 of the experiments (small improvements, 2%~) but seems to overfit in one of the experiments (7% less than the reference model)
 

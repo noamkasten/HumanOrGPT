@@ -11,8 +11,6 @@ from transformers import DistilBertForSequenceClassification, DistilBertTokenize
 from transformers import Trainer, TrainingArguments
 import torch.nn.init as init
 
-wandb.login(key="892412d702fd24f7c9ff06cbac4625513f88b27d")
-
 
 class ChatGPTDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
