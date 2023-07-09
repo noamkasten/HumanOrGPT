@@ -375,6 +375,3 @@ def run_models(training_dataset_relative_path, mode, datatype, apikey, model=1, 
         check_reference_score(train_dataset, val_dataset, test_dataset)
     else:
         raise Exception("Unknown Model")
-
-
-# run_models("../Datasets/Rephrased_GPT3_paper.xlsx", apikey="892412d702fd24f7c9ff06cbac4625513f88b27d", datatype="rephrased" ,mode=0, model=1, training_params=None, test_set_path="../Datasets/Rephrased_GPT3_testset_paper.xlsx")
