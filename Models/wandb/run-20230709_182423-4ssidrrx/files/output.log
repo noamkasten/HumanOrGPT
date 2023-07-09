@@ -1,0 +1,51 @@
+
+
+
+  1%|          | 2/243 [00:04<10:02,  2.50s/it][W 2023-07-09 18:24:32,584] Trial 0 failed with parameters: {'fc1_dim': 1664, 'dropout_rate0': 0.09341966712815807, 'dropout_rate1': 0.294805841675724, 'weight_decay': 3.3811011857621023, 'lr': 0.001330371155217318, 'warmup_steps': 604, 'per_batch_size': 18} because of the following error: KeyboardInterrupt().
+Traceback (most recent call last):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 200, in _run_trial
+    value_or_values = func(trial)
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 185, in objective
+    trainer.train()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1645, in train
+    return inner_training_loop(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1938, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 2770, in training_step
+    self.accelerator.backward(loss)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\accelerate\accelerator.py", line 1821, in backward
+    loss.backward(**kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\_tensor.py", line 487, in backward
+    torch.autograd.backward(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\autograd\__init__.py", line 200, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt
+[W 2023-07-09 18:24:32,626] Trial 0 failed with value None.
+Traceback (most recent call last):
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 209, in <module>
+    study_rephrased_paper.optimize(objective, n_trials=5)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\study.py", line 443, in optimize
+    _optimize(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 66, in _optimize
+    _optimize_sequential(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 163, in _optimize_sequential
+    frozen_trial = _run_trial(study, func, catch)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 251, in _run_trial
+    raise func_err
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 200, in _run_trial
+    value_or_values = func(trial)
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 185, in objective
+    trainer.train()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1645, in train
+    return inner_training_loop(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1938, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 2770, in training_step
+    self.accelerator.backward(loss)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\accelerate\accelerator.py", line 1821, in backward
+    loss.backward(**kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\_tensor.py", line 487, in backward
+    torch.autograd.backward(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\autograd\__init__.py", line 200, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

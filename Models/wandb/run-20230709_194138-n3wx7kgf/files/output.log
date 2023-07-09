@@ -1,0 +1,72 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  7%|▋         | 40/543 [00:55<10:32,  1.26s/it]Traceback (most recent call last):
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 335, in <module>
+    models_on_rephrased("../Datasets/Rephrased_GPT3_paper.xlsx", mode=0, model=1, training_params=None, test_set_path="../Datasets/Rephrased_GPT3_testset_paper.xlsx")
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 330, in models_on_rephrased
+    check_reference_score(train_dataset_paper, val_dataset_paper, test_dataset_paper)
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 284, in check_reference_score
+    trainer.train()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1645, in train
+    return inner_training_loop(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1938, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 2759, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 2784, in compute_loss
+    outputs = model(**inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 763, in forward
+    distilbert_output = self.distilbert(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 583, in forward
+    return self.transformer(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 359, in forward
+    layer_outputs = layer_module(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 313, in forward
+    ffn_output = self.ffn(sa_output)  # (bs, seq_length, dim)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 254, in forward
+    return apply_chunking_to_forward(self.ff_chunk, self.chunk_size_feed_forward, self.seq_len_dim, input)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\pytorch_utils.py", line 237, in apply_chunking_to_forward
+    return forward_fn(*input_tensors)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\models\distilbert\modeling_distilbert.py", line 259, in ff_chunk
+    x = self.lin2(x)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+KeyboardInterrupt
