@@ -1,56 +1,9 @@
 # Importing the libraries needed
-import pandas as pd
-import torch
-import transformers
 from torch.utils.data import Dataset, DataLoader
 from transformers import DistilBertModel, DistilBertTokenizer
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
-from transformers import Trainer, TrainingArguments
-from sklearn.model_selection import train_test_split
-import accelerate
-import numpy as np
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 import pandas as pd
-from transformers import DistilBertForSequenceClassification, Trainer, TrainingArguments
 import torch
-import optuna
 from torch import cuda
-
-# Setting up the device for GPU usage
-device = 'cuda' if cuda.is_available() else 'cpu'
-print(device)
-
-
-dataframe_rephrased_unified = pd.read_excel('../Datasets/Rephrased_GPT3_paper.xlsx')
-dataframe_rephrased_unified = dataframe_rephrased_unified.sample(frac=1).reset_index(drop=True)
-dataframe_rephrased_unified = dataframe_rephrased_unified.dropna()
-print(dataframe_rephrased_unified)
-
-# stacked_data = pd.concat([dataframe_rephrased_unified["Bot-made counterpart"], dataframe_rephrased_unified["Human Review"]], axis=0)
-# # Reset the index if you want a continuous index in the new Series
-# stacked_data = stacked_data.reset_index(drop=True)
-# stacked_df = stacked_data.to_frame(name='text')
-
-df_bot = dataframe_rephrased_unified[["Bot-made counterpart"]].copy()
-df_bot.columns = ["text"]
-df_bot["label"] = 1
-df_human = dataframe_rephrased_unified[["Human Review"]].copy()
-df_human.columns = ["text"]
-df_human["label"] = 0
-# Concatenate the two DataFrames
-stacked_df = pd.concat([df_bot, df_human], axis=0)
-# Reset the index
-stacked_df = stacked_df.reset_index(drop=True)
-
-
-
-# Defining some key variables that will be used later on in the training
-MAX_LEN = max(len(review) for review in stacked_df["text"])
-TRAIN_BATCH_SIZE = 32
-VALID_BATCH_SIZE = 32
-EPOCHS = 3
-LEARNING_RATE = 1e-05
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 
 
 class Triage(Dataset):
@@ -83,33 +36,6 @@ class Triage(Dataset):
 
     def __len__(self):
         return self.len
-
-# Creating the dataset and dataloader for the neural network
-train_size = 0.8
-train_dataset=stacked_df.sample(frac=train_size)
-test_dataset=stacked_df.drop(train_dataset.index).reset_index(drop=True)
-train_dataset = train_dataset.reset_index(drop=True)
-
-
-print("FULL Dataset: {}".format(stacked_df.shape))
-print("TRAIN Dataset: {}".format(train_dataset.shape))
-print("TEST Dataset: {}".format(test_dataset.shape))
-
-training_set = Triage(train_dataset, tokenizer, MAX_LEN)
-testing_set = Triage(test_dataset, tokenizer, MAX_LEN)
-
-train_params = {'batch_size': 32,
-                'shuffle': True,
-                'num_workers': 0
-                }
-
-test_params = {'batch_size': VALID_BATCH_SIZE,
-                'shuffle': True,
-                'num_workers': 0
-                }
-
-training_loader = DataLoader(training_set, **train_params)
-testing_loader = DataLoader(testing_set, **test_params)
 
 
 # Creating the customized model, by adding a drop out and a dense layer on top of distil bert to get the final output for the model.
@@ -147,7 +73,7 @@ def calculate_accuracy(big_idx, targets):
 
 # Defining the training function on the 80% of the dataset for tuning the distilbert model
 
-def train(epoch):  # 10
+def train(epoch, model, training_loader, device, loss_function, optimizer):  # 10
     train_loss = 0
     n_correct = 0
     nb_tr_steps = 0
@@ -193,17 +119,88 @@ def train(epoch):  # 10
     print(f"Training Loss Epoch: {epoch_loss}")
     print(f"Training Accuracy Epoch: {epoch_accu}")
 
-model = DistillBERTClass()
-# model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased')
-model.to(device)
 
-loss_function = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
-for epoch in range(2):
-    train(epoch)
+def custom_trainer(hyperparams: dict = None):
+    """
+    Function to train the custom model using a different classification head and custom training loop
+    which is different from the Trainer() method. Here we have more control on the training process, but the training
+    is less efficient and not using multi GPU processors properly. In the end we used the Trainer() class.
+    :param hyperparams: the hyper parameters to train, in the format of:
+                        hyperparams = {"TRAIN_BATCH_SIZE": 32,
+                                            "VALID_BATCH_SIZE": 32,
+                                            "EPOCHS": 3,
+                                            "LEARNING_RATE": 1e-05}
+    :return: The trained model using the hyperparams provided.
+    """
+
+    if hyperparams is None:
+        hyperparams = {"TRAIN_BATCH_SIZE": 32,
+                        "VALID_BATCH_SIZE": 32,
+                        "EPOCHS": 3,
+                        "LEARNING_RATE": 1e-05}
+    # Setting up the device for GPU usage
+    device = 'cuda' if cuda.is_available() else 'cpu'
+    print(device)
+
+    dataframe_rephrased_unified = pd.read_excel('../Datasets/Rephrased_GPT3_paper.xlsx')
+    dataframe_rephrased_unified = dataframe_rephrased_unified.sample(frac=1).reset_index(drop=True)
+    dataframe_rephrased_unified = dataframe_rephrased_unified.dropna()
+    print(dataframe_rephrased_unified)
+
+    df_bot = dataframe_rephrased_unified[["Bot-made counterpart"]].copy()
+    df_bot.columns = ["text"]
+    df_bot["label"] = 1
+    df_human = dataframe_rephrased_unified[["Human Review"]].copy()
+    df_human.columns = ["text"]
+    df_human["label"] = 0
+    # Concatenate the two DataFrames
+    stacked_df = pd.concat([df_bot, df_human], axis=0)
+    # Reset the index
+    stacked_df = stacked_df.reset_index(drop=True)
+
+    # Defining some key variables that will be used later on in the training
+    MAX_LEN = max(len(review) for review in stacked_df["text"])
+    TRAIN_BATCH_SIZE = hyperparams["TRAIN_BATCH_SIZE"]
+    VALID_BATCH_SIZE = hyperparams["VALID_BATCH_SIZE"]
+    EPOCHS = hyperparams["EPOCHS"]
+    LEARNING_RATE = hyperparams["LEARNING_RATE"]
+    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+
+    # Creating the dataset and dataloader for the neural network
+    train_size = 0.8
+    train_dataset = stacked_df.sample(frac=train_size)
+    test_dataset = stacked_df.drop(train_dataset.index).reset_index(drop=True)
+    train_dataset = train_dataset.reset_index(drop=True)
+
+    print("FULL Dataset: {}".format(stacked_df.shape))
+    print("TRAIN Dataset: {}".format(train_dataset.shape))
+    print("TEST Dataset: {}".format(test_dataset.shape))
+
+    training_set = Triage(train_dataset, tokenizer, MAX_LEN)
+    testing_set = Triage(test_dataset, tokenizer, MAX_LEN)
+
+    train_params = {'batch_size': TRAIN_BATCH_SIZE,
+                    'shuffle': True,
+                    'num_workers': 0
+                    }
+    test_params = {'batch_size': VALID_BATCH_SIZE,
+                   'shuffle': True,
+                   'num_workers': 0
+                   }
+
+    training_loader = DataLoader(training_set, **train_params)
+    # testing_loader = DataLoader(testing_set, **test_params)
+    model = DistillBERTClass()
+    model.to(device)
+    loss_function = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
+    for epoch in range(EPOCHS):
+        train(epoch, model, training_loader, device, loss_function, optimizer)
+
+    return model
 
 
 
-# if __name__ == "__main__":
-
+if __name__ == "__main__":
+    model_output = custom_trainer()
 
