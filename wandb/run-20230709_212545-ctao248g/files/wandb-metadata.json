@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.9.6",
+    "heartbeatAt": "2023-07-09T18:25:46.763873",
+    "startedAt": "2023-07-09T18:25:45.522329",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:\\Users\\user\\OneDrive - Technion\\GoodNotes\\Semester 8\\Deep Learning\\project\\code\\HumanOrGPT\\Experiments.py",
+    "codePath": "Experiments.py",
+    "git": {
+        "remote": "https://github.com/noamkasten/HumanOrGPT.git",
+        "commit": "6e19f1cfd0274ae48e1b1c943beaf5f4b3cecd49"
+    },
+    "email": "noam.kasten@campus.technion.ac.il",
+    "root": "C:/Users/user/OneDrive - Technion/GoodNotes/Semester 8/Deep Learning/project/code/HumanOrGPT",
+    "host": "EEIT-148",
+    "username": "user",
+    "executable": "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1609.0,
+        "min": 0.0,
+        "max": 2112.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1609.0,
+            "min": 0.0,
+            "max": 2112.0
+        }
+    ],
+    "disk": {
+        "total": 475.69237899780273,
+        "used": 431.2391471862793
+    },
+    "memory": {
+        "total": 15.71163558959961
+    }
+}

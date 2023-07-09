@@ -94,6 +94,40 @@ def pre_process_data_rephrased_trainset(trainset_path):
     return train_dataset, val_dataset, val_texts, val_labels
 
 
+def pre_process_data_Generated(trainset_path):
+    # Read the XLSX file
+    train_set = pd.read_excel(trainset_path)
+
+    # Specify the columns that contain the text
+    human_texts = train_set['Human Review'].dropna().tolist()
+    bot_texts = train_set['Bot-made counterpart'].dropna().tolist()
+
+    # Assign labels: 0 for human-generated text, 1 for bot-generated text
+    human_labels = [0] * len(human_texts)
+    bot_labels = [1] * len(bot_texts)
+
+    # Combine human and bot texts, and their corresponding labels
+    texts = human_texts + bot_texts
+    labels = human_labels + bot_labels
+
+
+    # Split the data into training and validation sets
+    train_texts, val_texts, train_labels, val_labels = train_test_split(texts, labels, test_size=0.2, stratify=labels)
+    test_texts, val_texts, test_labels, val_labels = train_test_split(val_texts, val_labels, test_size=0.5, stratify=val_labels)
+    # Initialize the tokenizer
+    tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+
+    # Tokenize the data
+    train_encodings = tokenizer(train_texts, truncation=False, padding=True)
+    val_encodings = tokenizer(val_texts, truncation=False, padding=True)
+    test_encodings = tokenizer(test_texts, truncation=False, padding=True)
+
+    train_dataset = ChatGPTDataset(train_encodings, train_labels)
+    val_dataset = ChatGPTDataset(val_encodings, val_labels)
+    test_dataset = ChatGPTDataset(test_encodings, test_labels)
+    return train_dataset, val_dataset, test_dataset
+
+
 class CustomDistilBertForSequenceClassification(DistilBertForSequenceClassification):
     def __init__(self, config, fc1_dim, dropout_rate0, dropout_rate1):
         super(CustomDistilBertForSequenceClassification, self).__init__(config)
@@ -287,28 +321,39 @@ def check_reference_score(train_dataset, val_dataset, test_dataset):
     print(test_result["eval_accuracy"])
     return test_result
 
-def models_on_rephrased(training_dataset_relative_path, mode, model=1, trials=50, visualizations=0, training_params=None, test_set_path=None):
+def run_models(training_dataset_relative_path, mode, datatype, apikey, model=1, trials=50, visualizations=0, training_params=None, test_set_path=None):
     """
     The main function for training, testing and interference of the rephrased models.
-    if training_params isn't given in the format of:
+    if training_params isn't given in the format of: {'fc1_dim': 1782, 'dropout_rate0': 0.1751534368234854, 'dropout_rate1': 0.21561774314829185,
+                                                        'weight_decay': 2.7309885883941796, 'lr': 1.982242578465992e-05,
+                                                        'warmup_steps': 320, 'per_batch_size': 23}
     It will perform Optuna with 50 trials by default and will take the best params performed on validation set.
 
-    :param training_dataset_relative_path: the path to the dataset
-    :param mode: mode 0 is for training using optuna and then test, mode 1 is for testing a testset given training_params and test_set_path.
+    :param training_dataset_relative_path: the path to the training dataset.
+    :param mode: mode 0 is for training using optuna and then test, mode 1 is for testing a testset given training_params and test_set_path without Optuna.
+    :param datatype: "rephrased" or "generated", it's important due to different preprocess of the data.
+    :param apikey: the wandb apikey.
     :param model: if mode = 1, then if model = 0 it will test on the custom model with the given training_params and if the model = 1 it will test on reference uncustomized model.
-                    on default it will train on uncustomize model (because it doens't need params)
-    :param training_params:
-    :param test_set_path:
-    :param visualizations: flag = 1 to show visualization and 0 otherwise
-    :return:
+                    on default it will train on uncustomized model (because it doesn't need params)
+    :param trials: nubmer of trials for Optuna to perform.
+    :param visualizations: flag = 1 to show visualization and 0 otherwise.
+    :param training_params: The dictionary of the hyperparams in the format presented above.
+    :param test_set_path: the path to the testing dataset (If there's any).
+    :return: None. Presenting the results.
     """
-    wandb.login(key="892412d702fd24f7c9ff06cbac4625513f88b27d")
-    train_dataset_paper, val_dataset_paper, val_set_paper, val_label_set_paper = pre_process_data_rephrased_trainset(training_dataset_relative_path)
+    wandb.login(key=apikey)
+    if datatype == "rephrased":
+        train_dataset, val_dataset, _, _ = pre_process_data_rephrased_trainset(training_dataset_relative_path)
+        test_dataset = preprocess_testset(test_set_path)
+    elif datatype == "generated":
+        train_dataset, val_dataset, test_dataset = pre_process_data_Generated(training_dataset_relative_path)
+    else:
+        raise Exception("Unknown Datatype")
     cur_params = training_params
     if model == 0:
         if (mode == 0) or (mode == 1 and not training_params):
             study_rephrased_paper = optuna.create_study(direction='maximize')
-            objective = wrapper_for_objective(train_dataset_paper, val_dataset_paper)
+            objective = wrapper_for_objective(train_dataset, val_dataset)
             study_rephrased_paper.optimize(objective, n_trials=trials)
 
             best_trial_rephrased_paper = study_rephrased_paper.best_trial
@@ -323,15 +368,15 @@ def models_on_rephrased(training_dataset_relative_path, mode, model=1, trials=50
             if visualizations:
                 run_visualizations(study_rephrased_paper)
 
-    test_dataset_paper = preprocess_testset(test_set_path)
+
     if model == 0:
         print("Test performance on custom model:")
-        check_test(cur_params, train_dataset_paper, val_dataset_paper, test_dataset_paper)
+        check_test(cur_params, train_dataset, val_dataset, test_dataset)
     elif model == 1:
         print("Test performance on reference model:")
-        check_reference_score(train_dataset_paper, val_dataset_paper, test_dataset_paper)
+        check_reference_score(train_dataset, val_dataset, test_dataset)
     else:
         raise Exception("Unknown Model")
 
 
-models_on_rephrased("../Datasets/Rephrased_GPT3_paper.xlsx", mode=0, model=1, training_params=None, test_set_path="../Datasets/Rephrased_GPT3_testset_paper.xlsx")
+# run_models("../Datasets/Rephrased_GPT3_paper.xlsx", apikey="892412d702fd24f7c9ff06cbac4625513f88b27d", datatype="rephrased" ,mode=0, model=1, training_params=None, test_set_path="../Datasets/Rephrased_GPT3_testset_paper.xlsx")

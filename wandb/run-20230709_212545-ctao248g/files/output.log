@@ -1,0 +1,76 @@
+
+
+  0%|          | 1/312 [00:02<11:33,  2.23s/it][W 2023-07-09 21:25:51,129] Trial 0 failed with parameters: {'fc1_dim': 526, 'dropout_rate0': 0.21496232675246119, 'dropout_rate1': 0.08002553956145367, 'weight_decay': 1.0269585050615309, 'lr': 0.004998502207178621, 'warmup_steps': 241, 'per_batch_size': 14} because of the following error: KeyboardInterrupt().
+Traceback (most recent call last):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 200, in _run_trial
+    value_or_values = func(trial)
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 219, in objective
+    trainer.train()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1645, in train
+    return inner_training_loop(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1950, in _inner_training_loop
+    self.current_flos += float(self.floating_point_ops(inputs))
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 3545, in floating_point_ops
+    return self.model.floating_point_ops(inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 1024, in floating_point_ops
+    return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 972, in num_parameters
+    non_embedding_parameters = [
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 972, in <listcomp>
+    non_embedding_parameters = [
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2115, in named_parameters
+    yield from gen
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2049, in _named_members
+    for module_prefix, module in modules:
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  [Previous line repeated 2 more times]
+KeyboardInterrupt
+[W 2023-07-09 21:25:51,196] Trial 0 failed with value None.
+Traceback (most recent call last):
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Experiments.py", line 61, in <module>
+    rephrased_experiments()
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Experiments.py", line 19, in rephrased_experiments
+    run_models("Datasets/Rephrased_GPT3_paper.xlsx", apikey=API_KEY,
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 353, in run_models
+    study_rephrased_paper.optimize(objective, n_trials=trials)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\study.py", line 443, in optimize
+    _optimize(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 66, in _optimize
+    _optimize_sequential(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 163, in _optimize_sequential
+    frozen_trial = _run_trial(study, func, catch)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 251, in _run_trial
+    raise func_err
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\optuna\study\_optimize.py", line 200, in _run_trial
+    value_or_values = func(trial)
+  File "C:\Users\user\OneDrive - Technion\GoodNotes\Semester 8\Deep Learning\project\code\HumanOrGPT\Models\BasedOnTrainer.py", line 219, in objective
+    trainer.train()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1645, in train
+    return inner_training_loop(
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 1950, in _inner_training_loop
+    self.current_flos += float(self.floating_point_ops(inputs))
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\trainer.py", line 3545, in floating_point_ops
+    return self.model.floating_point_ops(inputs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 1024, in floating_point_ops
+    return 6 * self.estimate_tokens(input_dict) * self.num_parameters(exclude_embeddings=exclude_embeddings)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 972, in num_parameters
+    non_embedding_parameters = [
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\transformers\modeling_utils.py", line 972, in <listcomp>
+    non_embedding_parameters = [
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2115, in named_parameters
+    yield from gen
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2049, in _named_members
+    for module_prefix, module in modules:
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python39\lib\site-packages\torch\nn\modules\module.py", line 2266, in named_modules
+    for m in module.named_modules(memo, submodule_prefix, remove_duplicate):
+  [Previous line repeated 2 more times]
+KeyboardInterrupt

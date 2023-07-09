@@ -1,14 +1,17 @@
 <h1 align="center">Human or GPT Project</h1>
+
+![Theme Image](./Images/Theme.png)
+
 <h2 align="center">Final project for the Technion's EE Deep Learning course (046211)</h2> 
 
   <p align="center">
-    Noam Kasten: <a href="https://www.linkedin.com/in/shahar-yadin-069725195/">LinkedIn</a> , <a href="https://github.com/NoamKasten">GitHub</a>
+    Noam Kasten: <a href="https://www.linkedin.com/in/noamkasten/">LinkedIn</a> , <a href="https://github.com/NoamKasten">GitHub</a>
   <br>
     Mohamad Abu El-Hija: <a href="https://www.linkedin.com/in/">LinkedIn</a> , <a href="https://github.com">GitHub</a>
   </p>
 
 
-## Background
+## Background and Introduction
 As Natural Language Processing (NLP) technologies continue to advance, the potential misuse of chatbots for malicious 
 purposes, such as propagating misinformation, poses a significant societal challenge.
 
@@ -26,7 +29,13 @@ Using SHAP we get a glimpse on the process of the decision of the classifier, i.
 The overall process is as following:
 ![Image of process](./Images/OverallProcess.png)
 
-Steps 2 and 3 are done using SHAP methodology
+Steps 2 and 3 are done using SHAP methodology which we will explain next.
+
+### Types of data
+In the experiements we are considering two types of data:
+1. Reviews **GENERATED** from scratch, i.e. we just tell GPT to create reviews (negative or positive)
+2. Reviews **REPHRASED** from other human review, i.e. we take real human reviews and tell GPT to rephrase them in its own words.
+
 
 ## SHAP
 
@@ -40,7 +49,7 @@ High absolute SHAP value indicates that the word is important for the classifica
 
 ## Datasets
 As said, we used the classifier on the domain of restaurant reviews where we used datasets created by us using GPT3.5 and 
-GPT4 and datasets created by GPT3 which were kindley provided to us by the authors of the paper #TODO , which we had as our background
+GPT4 and datasets created by GPT3 which were kindley provided to us by the authors of the paper showed in the reference part, which we had as our background
 theory that we extended and provided additional steps.
 The code for the openAI API and the prompts are presented in Utils folder 
 
@@ -87,42 +96,70 @@ Such an example for prompt is presented in the following flow:
 
 The technical detalis on the last part are as the following:
 
-<p float="left">
-  <img src="./Images/SHAP_Testing.png" width="300">
-</p>
-
 ![SHAP classification explaination](./Images/SHAP_Testing.png)
 
-
-## Installation
-
-Clone the repository and run
-```
-$ git clone https://github.com/noamkasten/HumanOrGPT.git
-$ pip install prereq
-$ python main.py
-```
-
-## Config
-
-
+Using this logic, we were able to test the new rephrased data using the previously trained model, And we got a significant decline in the test accuracy.
 
 ## Files in the repository
 
 | File name                                                     | Purpsoe                                                                                                                                       |
 |---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `main.py`                                                     | general purpose main application                                                                                                              |
-| `trainer.py`                                                  | main application for training BYOL-ViT or linear classifier model                                                                             |
-
-## Running Example
-### Training
-* how to train 
-
-### Test using test sets
-
-### Single sentence inference
-* run `python single.py`
+| `Experiments.py`                                                     | All the 9 experiments performed one by one. This file can be changed                                                                                                               |
+| `Models/BasedOnTrainer.py` | The centeral training model using Trainer() class. The main logic of this project. |
+| `Models/CustomTrainingModel.py` | The custom training model not using Trainer() class. |
+| `Utils/GetAPI.py` | The code we used to automate the prompts to ChatGPT 3.5, the different prompts mentioned here are presented there |
+| Images folder | All the images presented here.|
+| Datasets folder | All the datasets used in the experiments.|
+| `Readme.md`                                                  | This File                                                                             |
 
 
-## References 
+
+## Installation and Running Example
+
+Clone the repository and run the experiments using the Experiments.py file (the file is now containing the experiments that we did) add inside the API key for wandb library using their website:https://wandb.ai/authorize.
+Paste it in the constant API_KEY.
+```
+$ git clone https://github.com/noamkasten/HumanOrGPT.git
+$ pip install -r requirements.txt
+*Add wandb API key to Experiments.py file*
+$ python Experiments.py
+```
+The experiments are function activations of the function run_models which constitute all the logic of the models and the process of training them and testing them.
+We are adding here the documentation of that function which is crucial to understand in order to create your own experiments:
+
+```
+    The main function for training, testing and interference of the rephrased models.
+    if training_params isn't given in the format of: {'fc1_dim': 1782, 'dropout_rate0': 0.1751534368234854, 'dropout_rate1': 0.21561774314829185,
+                                                        'weight_decay': 2.7309885883941796, 'lr': 1.982242578465992e-05,
+                                                        'warmup_steps': 320, 'per_batch_size': 23}
+    It will perform Optuna with 50 trials by default and will take the best params performed on validation set.
+
+    :param training_dataset_relative_path: the path to the training dataset.
+    :param mode: mode 0 is for training using optuna and then test, mode 1 is for testing a testset given training_params and test_set_path without Optuna.
+    :param datatype: "rephrased" or "generated", it's important due to different preprocess of the data.
+    :param apikey: the wandb apikey.
+    :param model: if mode = 1, then if model = 0 it will test on the custom model with the given training_params and if the model = 1 it will test on reference uncustomized model.
+                    on default it will train on uncustomized model (because it doesn't need params)
+    :param trials: nubmer of trials for Optuna to perform.
+    :param visualizations: flag = 1 to show visualization and 0 otherwise.
+    :param training_params: The dictionary of the hyperparams in the format presented above.
+    :param test_set_path: the path to the testing dataset (If there's any).
+    :return: None. Presenting the results.
+```
+
+
+## Requirements
+| Package                                                     | Version                                                                                                                                       |
+|---------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+|accelerate|0.20.3|
+|numpy|1.24.2|
+|openai|0.27.8|
+|optuna|3.2.0|
+|pandas|1.5.3|
+|scikit_learn|1.2.2|
+|torch|2.0.0|
+|transformers|4.30.2|
+
+
+## Reference
 * The project's theory is based on the paper: Mitrović, Sandra, Davide Andreoletti, and Omran Ayoub. "Chatgpt or human? detect and explain. explaining decisions of machine learning model for detecting short chatgpt-generated text." arXiv preprint [arXiv:2301.13852 (2023)](https://arxiv.org/pdf/2301.13852.pdf).
